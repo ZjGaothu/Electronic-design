@@ -1,0 +1,389 @@
+\documentclass[a4paper, 11pt]{article} %option para: draft mode not insert figure, give a faster preview
+\usepackage[UTF8]{ctex} %for chinese
+\usepackage{amsmath}    %for math
+\usepackage{geometry}   %for page setting
+\usepackage{graphicx}   % for insert graph
+\usepackage{color}    %for link and code color
+\usepackage{float}    %for graph table in the follow word
+\usepackage[colorlinks,linkcolor=blue,anchorcolor=blue,citecolor=green]{hyperref} %for a linked ref
+
+\setlength{\parindent}{2em} % maybe not use delete it ?
+\geometry{left=3.0cm, right=3.0cm, top=3.0cm, bottom=3.0cm}
+
+\graphicspath{{figure/}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%             optional package default in comment to improve compile speed            %%%%
+
+% \usepackage{physics}    %for a readable formulation
+
+
+% \usepackage[all]{hypcap} % use to jump to the top of figure/table rather than merely caption
+
+% \usepackage{fancyhdr}
+% \pagestyle{fancy} % leftmark is a build-in marco means the current higher level in markboth, right is a lower one
+
+% \addtolength{\headheight}{\baselineskip} % use to delete headheight waring
+% \fancyfoot[C]{\thepage}
+% \fancyhead[L]{\leftmark}
+% \fancyhead[R]{\rightmark}
+% \renewcommand{\headrulewidth}{0pt}
+% \pagestyle{fancy}
+
+% \usepackage[final]{listings} %for code use final to exclude draft mode to show whenever it is
+% \definecolor{dkgreen}{rgb}{0,0.6,0}
+% \definecolor{gray}{rgb}{0.5,0.5,0.5}
+% \definecolor{mauve}{rgb}{0.58,0,0.82}
+
+% \lstset{frame=tb,
+%   language=c++,
+%   aboveskip=3mm,
+%   belowskip=3mm,
+%   showstringspaces=false,
+%   columns=flexible,
+%   basicstyle={\small\ttfamily},
+%   numbers=left, %none, right
+%   numberstyle=\tiny\color{gray},
+%   keywordstyle=\color{blue},
+%   commentstyle=\color{dkgreen},
+%   stringstyle=\color{mauve},
+%   breaklines=true,
+%   breakatwhitespace=true,
+%   tabsize=2,
+%   captionpos=b
+% }
+% \renewcommand{\lstlistingname}{源代码} % to change the prefix as 源码 not Listing
+% \renewcommand{\lstlistlistingname}{源代码} % header name in list of listing
+% % \usepackage{fontspec}
+% % \setmonofont{Consolas} % set consolas in coding box, ONLY XeLaTeX so default comment remember a fontspec only used at the following
+
+
+% \usepackage{wrapfig}  % for picutre on the paragraph right, cannot work with chinese par in pdflatex
+
+
+% % \usepackage{fontspec} % for other font family
+
+
+% \usepackage{multirow} %for group row in a table
+
+
+% % Threeparttable
+% \usepackage{threeparttable}
+% \usepackage{booktabs}
+
+
+% % drawing script tikz and Circuitlib 
+% \usepackage{tikz}
+% \usetikzlibrary{circuits.ee.IEC}
+% \usetikzlibrary{positioning}
+
+% \usepackage[american]{circuitikz}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                         new recommand setting area                           %%%%
+
+% % Count those in subsection
+% \makeatletter
+% \@addtoreset{equation}{subsection}
+% \@addtoreset{figure}{subsection}
+% \@addtoreset{table}{subsection}
+% \makeatother
+% \renewcommand {\thefigure} {\thesubsection{}.\arabic{figure}}
+% \renewcommand {\thetable} {\thesubsection{}.\arabic{table}}
+% \renewcommand {\theequation} {\thesubsection{}.\arabic{equation}}
+
+
+% \newcommand{\parallelsum}{\mathbin{\!/\mkern-5mu/\!}} % parallesum for resistor
+% \newcommand{\upcite}[1]{\textsuperscript{\textsuperscript{\cite{#1}}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                         introduction section area                           %%%%
+
+
+\title{\huge{\textbf{实验x yyy} \\ \textbf{实验报告}}}
+\author{
+    \\
+    \\
+    \\
+    \\
+    \\
+    \\
+    \begin{tabular}{ll}
+        班级: & 自72\\
+        姓名：& 吴文绪\\
+        学号: &2017010910\\
+    \end{tabular}
+}
+\date{实验时间\quad y年 m月 d日}
+
+\begin{document}
+
+
+\maketitle
+\thispagestyle{empty}
+\setcounter{page}{0}
+\newpage
+
+% \tableofcontents
+% \thispagestyle{empty}
+% \setcounter{page}{0}
+% \newpage
+
+\section{实验目的}
+
+
+\section{预习任务}
+
+
+\section{实验原理}
+
+
+\section{数据分析}
+
+
+\section{思考题}
+
+\section{实验总结}
+
+% \newpage
+% \section{常用格式待查}
+
+% \subsection{文本编辑}
+% \paragraph{}
+% \textbf{加粗}\footnote{脚注}\textit{斜体}
+% \vspace{1cm}%水平间距调整
+% \vskip 7cm %垂直间距调整
+
+
+% \textbf{加粗}
+% \footnote{footnote}
+% \par{} 强制段落和缩进测试，人类的本质是复读机，人类的本质是复读机，人类的本质是复读机，人类的本质是复读机
+% \par{} 强制段落和缩进测试par用来缩进，人类的本质是复读机，人类的本质是复读机，人类的本质是复读机，人类的本质是复读机\S chapter
+% \paragraph{paragraph用来加这个粗字} 强制段落和缩进测试pargraph没有，人类的本质是复读机，人类的本质是复读机，人类的本质是复读机，人类的本质是复读机
+
+% \subsection{图}
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width = 0.8\textwidth]{test.png}
+%     \caption{标题} %最终文档中希望显示的图片标题
+%     \label{test}
+% \end{figure}
+
+% \par{} 引用测试 图\ref{test}
+
+% \begin{figure}[H]
+%   \centering
+%   \begin{minipage}[H]{0.48\textwidth}
+%     \centering
+%     \includegraphics[width = 0.9\textwidth]{test.png}
+%     \caption{标题1}
+%   \end{minipage}
+%   \begin{minipage}[H]{0.48\textwidth}
+%     \centering
+%     \includegraphics[width = 0.9\textwidth]{test.png}
+%     \caption{标题2}
+%   \end{minipage}
+% \end{figure}
+
+% 正常的段落
+
+% \begin{wrapfigure}{r}{0pt}    
+%     \includegraphics[width = 0.4\textwidth]{test.png}
+%     \caption{right hand side}
+% \end{wrapfigure}
+
+% 我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。我就正常写个段落，他会在左边。
+
+% \newpage
+% \subsection{数学}
+% \par{} 引用测试 \ref{test}
+
+% \paragraph{} the theorem is named after Russian Al. In this variant of the \textbf{CLT} the random $X_i + \sigma$
+
+% \paragraph{} Suppose ${X_1,X_2,...}$ is a sequence of independent random variables, each with finite expected value $\mu_i$ and variance $\sigma^2$. Define
+% \begin{equation}
+%    s_n^2=\sum_{i=1}^n \sigma_i^2 \qquad i = 1,2, \cdots n
+% \end{equation}
+
+% \begin{equation*}
+%   \int_{a}^{b}f(x) \,\mathrm{d}x = \frac{\mathrm{d}p}{\mathrm{d}q}
+% \end{equation*}
+
+% \begin{align*}
+%     P(X(S_n)=k-1|X(S_{n-1})=k)&=1\\
+%     P(X(S_n)=i,i\neq k-1|X(S_{n-1})=k)&=0
+% \end{align*}
+
+% \begin{equation}
+%     P=\left[ \begin{array}{ccccc}
+%          0&0&\cdots&0&1  \\
+%          1&0&\cdots&0&0 \\
+%          0&1&\cdots&0&0\\
+%          \vdots&\vdots&\ddots&\vdots&\vdots\\
+%          0&0&\cdots&1&0
+%     \end{array} \right]
+% \end{equation}
+
+% % physics package to get a more readable formulation but cannot get the hold preview
+
+% \begin{equation*}
+%   \dv{f}{x} = \pdv[n]{g}{t} = \pdv{f}{x}{y} = \mqty(a & b \\ c & d) = \int_{a}^{b}\sin[2](x) \dd x  = \abs{a} \qq{quick insert word}
+% \end{equation*}
+
+% \subsection{表}
+% % use latex table tool-- an online generator tool to fast build a table
+%   \begin{table}[H]
+%     \centering
+%       \begin{tabular}{cc}
+%           A & a\\
+%           BBB & b\\
+%       \end{tabular}
+%     \caption{test}
+%   \end{table}
+
+%   \begin{table}[H]
+%     \centering
+%     \begin{tabular}{||c|c|c|c||}
+%       \hline
+%       \multirow{2}*{合并行}&\multicolumn{3}{c||}{合并列}\\
+%       \cline{2-4}
+%       &测试&测试&测试\\
+%       \hline
+%       \end{tabular}
+%     \caption{muti table}
+%   \end{table}
+
+%   \begin{table}[H]
+%     \centering
+%     \begin{threeparttable}
+%       \small 
+%       \begin{tabular} {llll}
+%         \toprule
+%         GDP in base year(2010)/billion\$ & $A/A'$ & $S/S'$ & $G/G'$ \\
+%         \midrule
+%         123.166  & 2.187 & 1.129 & 1.471 \\
+%         \bottomrule
+%       \end{tabular}
+%       \caption{Vietnam economic indicators}
+%     \end{threeparttable}
+%   \end{table}
+
+
+
+% \subsection{代码}
+
+% \begin{lstlisting}[caption = c++ hellow world]
+% #include<iostream>
+% int main() {
+%     int a;
+%     for (int i = 0; i < 100; i++) {
+%       if (i % 2 == 0) {
+%         printf("Hello World!");
+%       }
+%     }
+%   return 0;
+% }
+% \end{lstlisting}
+
+% % use [language to change the para in lstset] to 
+% \begin{lstlisting}[language = python, caption = py hellow world]
+% for c in 'Python'
+%     print(c + '!')
+% \end{lstlisting}
+
+% \subsection{条目列表}
+
+% \begin{itemize}
+%   \item[*]INIT$\to$START: 按下START
+%   \item[*]INIT$\to$INIT: 未按下START 
+%   \item[*]START$\to$INPUT: START状态用于将输出的money, timer置为0，故此次态必为INPUT
+%   \item[*]INPUT$\to$INPUT: 没有按下ok，继续输入数字
+% \end{itemize}
+
+% \subsection{制图}
+% % may be warning incomptiable color with lstlisting ,recommand compile figure alone and insert to avoid it and speed up document compile
+% \begin{figure}[H]
+% \centering 
+% \begin{tikzpicture}[scale = 0.8] % or width with textwidth
+%   \draw[help lines] (8, 8) grid(11,11);
+%   \draw [->] (8, 8) --(9, 11);
+%   \draw [<->][line width = 2][black][dashed] (8,10) -- (8,8) -- (11,8);
+%   \draw[blue] (11,12) rectangle(10, 11);
+%   \draw[blue, fill = orange] (10,13) circle[radius = 0.1];
+%   \node[below] at (10, 13) {label $m \alpha th$};
+%   \draw [thick, black] (8,8) to [out=90,in=180] (9,9) to [out=0,in=180] (10.5,8) to [out=0,in=-135] (12,9) node[right, black]{in out degree curve};
+%   \node at (12,13) {free label $m \alpha th$};
+  
+%   \path [fill=yellow] (0,0) -- (0,5) to [out=-80, in=160] (3,.8) -- (3,0) -- (0,0);
+%   \draw [<->] (0,6) node [left] {$P$} -- (0,0) node [below left] {(0,0)} -- (7,0) node [below] {$Q$};
+%   \draw [ultra thick, dashed] (0,.8) node [left] {$P^*=.8$} -- (3,.8) -- (3,0) node [below] {$Q^*=3$};
+%   \draw [fill] (3,.8) circle [radius=.1];
+%   \draw [thick] (0,5) to [out=-80, in=160] (3,.8) to [out=-20, in=175] (6,0);     
+%   \end{tikzpicture}
+%   \caption{tikz制图供求曲线以及右上角的杂图}
+% \end{figure}
+
+% \begin{tikzpicture}
+%   \draw
+%   (0, 2) node[and port] (myand1) {}
+%   (0, 0) node[and port] (myand2) {}
+%   (2, 1) node[xnor port] (myxnor) {}
+%   (myand1.out) -| (myxnor.in 1)
+%   (myand2.out) -| (myxnor.in 2);
+% \end{tikzpicture}
+
+% \begin{figure}[H]
+%     \centering
+%     \begin{tikzpicture}
+%       \draw
+%       (4, 0) node[rground] (ground){}
+%       (4, 3) node[npn] (npn) {}
+%       (4, 6) node[rground, rotate = 180] (vcc) {} (4, 6) node[right] {$V_{cc}$}
+%       (0, 3) to[C, l_=$C_1$,  v^<=$U_{BEQ}$] (2, 3)
+%       (0, 3) node[] (C1n) {} (2, 3) node[] (C1p) {}
+%       (4, 4) to[C, l_=$C_2$,  v^>=$U_{CEQ}$] (6, 4)
+%       (4, 4) node[] (C2p) {} (6, 4) node[] (C2n) {}
+%       (3, 5) to[R, l=$R_b$] (3, 3)
+%       (3, 5) node[] (Rbp) {} (3, 3) node[] (Rbn) {}
+%       (4, 4) to[R, l=$R_c$] (4, 6)
+%       (4, 4) node[] (Rcn) {}  (4, 6) node[] (Rcp) {}
+%       (6, 1) to[R, l=$R_L$] (6, 3)
+%       (6, 1) node[] (RLn) {}  (6, 3) node[] (RLp) {}
+%       ;
+%       \draw
+%       (C1n) to[short, o-] (C1n)
+%       (C2n) to[short, o-] (C2n)
+%       (Rbn) to[short, *-] (npn.B)
+%       (C1p) to[short, -*] (Rbn)
+%       (Rbp) to[short] (3, 6) to[short, -*] (vcc)
+%       (Rcp) to[short, -*] (vcc)
+%       (npn.C) to[short, -*] (Rcn)
+%       (0, 0) to[short, o-*] (ground) to[short, *-o] (6, 0)
+%       (ground) to[short, *-] (npn.E)
+%       ;
+%       \draw[dashed]
+%       (6, 0) to[short] (RLn)
+%       (C2n) to[short] (RLp)
+%       ;
+%       \draw
+%       (C1n) node[below] {$+$} (0, 0) node[above] {$-$}
+%       (C2n) node[right] {$+$} (6, 0) node[right] {$-$}
+%       (0, 1.5) node[] {$u_i$}
+%       (6.2, 2) node[right] {$u_o$}
+%       ;
+% \end{tikzpicture}
+%     \caption{amplifer circuit(by circuitikz)}
+% \end{figure}
+
+% \newpage
+% \appendix % into appendix mode, section will count as ABCD
+
+% \section{图表源码索引}
+
+% \listoffigures
+% \listoftables
+% \lstlistoflistings % code listing
+
+\end{document}
