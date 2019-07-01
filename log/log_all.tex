@@ -1,0 +1,219 @@
+\documentclass[a4paper, 11pt]{article} %option para: draft mode not insert figure, give a faster preview
+\usepackage[UTF8]{ctex} %for chinese
+\usepackage{amsmath}    %for math
+\usepackage{geometry}   %for page setting
+\usepackage{graphicx}   % for insert graph
+\usepackage{color}    %for link and code color
+\usepackage{float}    %for graph table in the follow word
+\usepackage[colorlinks,linkcolor=blue,anchorcolor=blue,citecolor=green]{hyperref} %for a linked ref
+
+\setlength{\parindent}{2em} % maybe not use delete it ?
+\geometry{left=3.0cm, right=3.0cm, top=3.0cm, bottom=3.0cm}
+
+\graphicspath{{figure/}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%             optional package default in comment to improve compile speed            %%%%
+
+% \usepackage{physics}    %for a readable formulation
+
+
+% \usepackage[all]{hypcap} % use to jump to the top of figure/table rather than merely caption
+
+% \usepackage{fancyhdr}
+% \pagestyle{fancy} % leftmark is a build-in marco means the current higher level in markboth, right is a lower one
+
+% \addtolength{\headheight}{\baselineskip} % use to delete headheight waring
+% \fancyfoot[C]{\thepage}
+% \fancyhead[L]{\leftmark}
+% \fancyhead[R]{\rightmark}
+% \renewcommand{\headrulewidth}{0pt}
+% \pagestyle{fancy}
+
+\usepackage[final]{listings} %for code use final to exclude draft mode to show whenever it is
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=c++,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left, %none, right
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  captionpos=b
+}
+\renewcommand{\lstlistingname}{源代码} % to change the prefix as 源码 not Listing
+\renewcommand{\lstlistlistingname}{源代码} % header name in list of listing
+% \usepackage{fontspec}
+% \setmonofont{Consolas} % set consolas in coding box, ONLY XeLaTeX so default comment remember a fontspec only used at the following
+
+
+% \usepackage{wrapfig}  % for picutre on the paragraph right, cannot work with chinese par in pdflatex
+
+
+% % \usepackage{fontspec} % for other font family
+
+
+% \usepackage{multirow} %for group row in a table
+
+
+% % Threeparttable
+% \usepackage{threeparttable}
+% \usepackage{booktabs}
+
+
+% % drawing script tikz and Circuitlib 
+% \usepackage{tikz}
+% \usetikzlibrary{circuits.ee.IEC}
+% \usetikzlibrary{positioning}
+
+% \usepackage[american]{circuitikz}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                         new recommand setting area                           %%%%
+
+% % Count those in subsection
+% \makeatletter
+% \@addtoreset{equation}{subsection}
+% \@addtoreset{figure}{subsection}
+% \@addtoreset{table}{subsection}
+% \makeatother
+% \renewcommand {\thefigure} {\thesubsection{}.\arabic{figure}}
+% \renewcommand {\thetable} {\thesubsection{}.\arabic{table}}
+% \renewcommand {\theequation} {\thesubsection{}.\arabic{equation}}
+
+
+% \newcommand{\parallelsum}{\mathbin{\!/\mkern-5mu/\!}} % parallesum for resistor
+% \newcommand{\upcite}[1]{\textsuperscript{\textsuperscript{\cite{#1}}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%              for a dairy box%          %%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                         introduction section area                           %%%%
+
+\usepackage{xcolor}
+\usepackage{framed}
+
+
+\newlength\sidebar
+ \newlength\envrule
+ \newlength\envborder
+ \setlength\sidebar{1.5mm}
+ \setlength\envrule{0.4pt}
+ \setlength\envborder{2mm}
+
+\makeatletter
+ \long\def\fboxs#1{%
+   \leavevmode
+   \setbox\@tempboxa\hbox{%
+     \color@begingroup
+       \kern\fboxsep{#1}\kern\fboxsep
+     \color@endgroup}%
+   \@frames@x\relax}
+ \def\frameboxs{%
+   \@ifnextchar(%)
+     \@framepicbox{\@ifnextchar[\@frameboxs\fboxs}}
+ \def\@frameboxs[#1]{%
+   \@ifnextchar[%]
+     {\@iframeboxs[#1]}%
+     {\@iframeboxs[#1][c]}}
+ \long\def\@iframeboxs[#1][#2]#3{%
+   \leavevmode
+   \@begin@tempboxa\hbox{#3}%
+     \setlength\@tempdima{#1}%
+     \setbox\@tempboxa\hb@xt@\@tempdima
+          {\kern\fboxsep\csname bm@#2\endcsname\kern\fboxsep}%
+     \@frames@x{\kern-\fboxrule}%
+   \@end@tempboxa}
+ \def\@frames@x#1{%
+   \@tempdima\fboxrule
+   \advance\@tempdima\fboxsep
+   \advance\@tempdima\dp\@tempboxa
+   \hbox{%
+     \lower\@tempdima\hbox{%
+       \vbox{%
+        \hrule\@height\fboxrule
+       %  \hbox{%
+        %  \vrule\@width\fboxrule
+
+           #1%
+           \vbox{%
+             \vskip\fboxsep
+             \box\@tempboxa
+             \vskip\fboxsep}%
+           #1%
+           }\vrule\@width\fboxrule}%
+         }%\hrule\@height\fboxrule}%
+                          % }%
+        % }%
+ }
+ \def\esefcolorbox#1#{\esecolor@fbox{#1}}
+ \def\esecolor@fbox#1#2#3{%
+   \color@b@x{\fboxsep\z@\color#1{#2}\fboxs}{\color#1{#3}}}
+ \makeatother
+
+
+ \definecolor{exampleborder}{HTML}{00CED1}
+ \definecolor{examplebg}{HTML}{CEF6EC}
+ \definecolor{statementborder}{rgb}{.9,0,0}
+ \definecolor{statementbg}{rgb}{255,255,255}
+
+ \newenvironment{eseframed}{%
+   \def\FrameCommand{\fboxrule=\the\sidebar  \fboxsep=\the\envborder%
+   \esefcolorbox{exampleborder}{examplebg}}%
+   \MakeFramed{\FrameRestore}}%
+  {\endMakeFramed}
+
+
+ \newcounter{diary}
+\renewcommand{\thediary}{\arabic{diary}}
+
+ %%% CODE ENVIRONMENT. PUT TEXT INTO COLORED FRAME %%%
+ \newenvironment{diary}[2]
+ {\par\medskip\refstepcounter{diary}%
+ \hbox{%
+ \fboxsep=\the\sidebar\hspace{-\envborder}\hspace{-0.5\sidebar}%
+ \colorbox{exampleborder}{%
+ \hspace{\envborder}\footnotesize\sffamily\bfseries%
+ \textcolor{black}{{#1}\ {#2}\enspace\hspace{\envborder}}
+%\today
+ }
+ }
+ \nointerlineskip\vspace{-\topsep}%
+ \begin{eseframed}\noindent\ignorespaces%
+ }
+ {\end{eseframed}\vspace{-\baselineskip}\medskip}
+
+\begin{document}
+
+\begin{diary}{}{2019.07.01上午}
+
+电子设计小学期工作日的第一个上午，首先我们较为顺利地通过了预习验收，鼓舞了项目开始时的士气。
+
+此外，在等待验收的前前后后的过程中，我们主要使用\href{https://www.w3cschool.cn/arduino/}{W3Cschool的arduino教程}，对我们所选的主控模块进行了简单的上手热身。主要了解了其整体的程序语法，控制流，IO功能和串口通信调试功能。
+
+接近上午调试结束时，我们还盘点了已有的一些模块。我们现有的模块有LCD显示屏，蓝牙通信模块，基本可以实现数字部分的功能。而模拟部分的模块，大部分传感器仍在配送，电源管理模块可先根据已有的备选芯片进行一定的调试。故而我们敲定了之后的计划，按照电源管理、arduino并行的方法进行调试。而LCD的调试相蓝牙模块调试调试而言比较简单，故先进行调试；并且另一路对电源管理模块调试的结束后，可以分人手去提前学习一下蓝牙模块的使用。得到近期调试优先度大纲如下：
+
+\begin{enumerate}
+  \item arduino,LCD,串口联调；电源管理模块参数测试
+  \item 蓝牙模块学习调试。
+  \item 传感器模块的参数调试与联调。
+  \item 其他基于分立元件（如光敏电阻）的外围传感电路设计
+  \item 写数字系统整体代码框架
+\end{enumerate}
+
+\end{diary}
+
+\end{document}
