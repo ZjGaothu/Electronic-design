@@ -216,4 +216,39 @@
 
 \end{diary}
 
+\begin{diary}{}{2019.07.01下午}
+
+\par{}在经过上午的验收以及上手热身后，我们在下午正式开启了设计与调试，由于大多数传感器还没有送达，我们手中已有的模块是arduino uno主控模块和LCD1602液晶显示模块，为了减少IO的使用，我们特地前往中发电子大厦购买了I2C转接板，将16引脚方便的减少为4引脚和arduino相连接。
+
+在购置回转接板后，我们一方面开始学习LCD1602与arduino的硬件连接方法，以及其各个引脚的说明，并且在利用已有的LiquidCrystal库函数的情况下，尝试进行了字符数据的显示，成果如下：
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 0.53\textwidth]{chuan2.jpg}
+  \caption{LCD字符显示}
+\end{figure}
+起初并不能显示，后来我们很快发现是转接板电位器的问题，转接板电位器直接控制了LCD显示的亮度，因此在使用镊子改变电位到合适的亮度后便能观察到字符。在能够显示字符后，我们进一步结合上午的学习进行了串口LCD通信联调，使得在键盘上实时输入字符在LCD上进行显示，这是我们之后显示模块的重要基础，我们拍摄成果的照片如下：
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 0.53\textwidth]{chuan1.jpg}
+  \caption{LCD串口通信联调}
+\end{figure}
+另一方面，我们组在调试LCD的同时，对电源管理电路进行了实际的检测，我们计划使用9V的干电池，而恰好在实验室中找到一块电源管理的模块，能够在小于12V输入的情况下，输出5V/3.3V的直流电压，我们类比于电网$10\%$的波动，使用$8V\sim 10V$的50Hz正弦波作为输出，观察两输出的电压情况，结果十分令人满意，根据示波器的显示，以及自动测量的结果，能够得到纹波非常小的直流电压，并十分接近其标称的输出，记录如下图所示：
+\begin{figure}[H]
+  \begin{minipage}[t]{0.45\linewidth}
+      \centering
+      \includegraphics[width=6cm]{dy1.png}
+      \caption{3.3V稳压输出}
+  \end{minipage}%
+      \hfill
+  \begin{minipage}[t]{0.45\linewidth}
+      \centering
+      \includegraphics[width=6cm]{dy2.png}
+      \caption{5V稳压输出}
+  \end{minipage}
+\end{figure}
+其中黄色线为稳压输出，绿色线为输入，验证了该电源管理模块能够提供理想的供电电压，在TI公司的样片到来之前为我们的电源管理提供了替代。
+
+在下午收工以后我们另外找到一片蓝牙模块，计划于明天开启蓝牙模块的调试以及DHT11的湿度模块的调试，并通过LiquidCrystal库编写代码，实现自己需要的函数的头文件。
+
+\end{diary}
 \end{document}
