@@ -17,7 +17,7 @@ void setup() {
 }
 
 void loop() {
-   if(Serial.available() > 0){
+   if(Serial.available() > 0){   //串口缓冲区收到数据
       delay(100); //TODO may change, wait a string send finish
       numdata = Serial.readBytes(buffer, MAXLENGTH);
       Serial.print("Serial readBytes: ");
