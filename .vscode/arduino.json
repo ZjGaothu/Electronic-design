@@ -1,5 +1,6 @@
 {
     "board": "arduino:avr:uno",
-    "sketch": "wwx_temp\\test\\serial_LCD\\serial_LCD.ino",
-    "port": "COM4"
+    "sketch": "wwx_temp\\test\\bluetooth\\bluetooth.ino",
+    "port": "COM4",
+    "programmer": "AVRISP mkII"
 }
