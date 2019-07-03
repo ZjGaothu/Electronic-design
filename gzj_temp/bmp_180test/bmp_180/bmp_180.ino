@@ -39,3 +39,9 @@ void loop()
   }
   delay(1000);
 }
+
+//引脚连接 
+//5V—VIN
+//GND–GND
+//A5—SCL
+//A4—SDA
