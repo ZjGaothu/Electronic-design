@@ -29,8 +29,12 @@ void setup() {
         Serial.print("Writing..."); //TODO cancel it
         RecordFile.println("testing 1, 2, 3"); //file operation if not exist create, in Cup name/ if exist append in back
         RecordFile.close();
-        Serial.println("done.")
+        Serial.println("done.");
     } else {
-        Serial.println("error opening test.txt")
+        Serial.println("error opening test.txt");
     }
+}
+
+void loop() {
+
 }
