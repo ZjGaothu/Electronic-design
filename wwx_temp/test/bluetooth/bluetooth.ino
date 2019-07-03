@@ -33,6 +33,15 @@
 //     }
 // }
 
+/**************pin connectiion ***********************/
+/*
+3.3V, Arduino tx -- HC06 Rx better convert 5 - 3.3
+remember disconnect when upload programme
+Arduino     HC06
+1(TX)       RX
+0(RX)       TX
+*/
+
 char serialData;
 
 void setup() {

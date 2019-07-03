@@ -1,6 +1,13 @@
 #include <Wire.h> 
 #include "LiquidCrystal_I2C.h" //引用I2C库
- 
+/******************pin connection ************/ 
+/*
+5V
+SDA -- A4
+SCL -- A5
+
+*/
+
 //设置LCD1602设备地址，这里的地址是0x3F，一般是0x20，或者0x27，具体看模块手册
 LiquidCrystal_I2C lcd(0x3F,16,2);  
  
