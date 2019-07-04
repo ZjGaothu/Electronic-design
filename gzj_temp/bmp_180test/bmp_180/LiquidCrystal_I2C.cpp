@@ -54,7 +54,7 @@ LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t l
 
 void LiquidCrystal_I2C::oled_init(){
   _oled = true;
-  init_priv();
+	init_priv();
 }
 
 void LiquidCrystal_I2C::init(){
@@ -92,7 +92,7 @@ void LiquidCrystal_I2C::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
 	// this is according to the hitachi HD44780 datasheet
 	// figure 24, pg 46
 	
-	// we start in 8bit mode, try to set 4 bit mode
+	  // we start in 8bit mode, try to set 4 bit mode
    write4bits(0x03 << 4);
    delayMicroseconds(4500); // wait min 4.1ms
    
@@ -255,7 +255,7 @@ inline void LiquidCrystal_I2C::command(uint8_t value) {
 void LiquidCrystal_I2C::send(uint8_t value, uint8_t mode) {
 	uint8_t highnib=value&0xf0;
 	uint8_t lownib=(value<<4)&0xf0;
-    write4bits((highnib)|mode);
+       write4bits((highnib)|mode);
 	write4bits((lownib)|mode); 
 }
 
