@@ -1,6 +1,6 @@
 {
     "board": "arduino:avr:uno",
-    "sketch": "wwx_temp\\test\\IR_receiver\\IR_receiver.ino",
+    "sketch": "wwx_temp\\test\\IO_to_I2C\\IO2I2C.ino",
     "port": "COM4",
     "programmer": "AVRISP mkII"
 }

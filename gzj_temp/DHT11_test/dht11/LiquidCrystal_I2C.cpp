@@ -63,20 +63,20 @@ void LiquidCrystal_I2C::init(){
 
 void LiquidCrystal_I2C::init_priv()
 {
-	Wire.begin();
-	_displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
+	Wire.begin();	// set I2C master
+	_displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS; //TODO
 	begin(_cols, _rows);  
 }
 
-void LiquidCrystal_I2C::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
+void LiquidCrystal_I2C::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) { //TODO dotsize ?
 	if (lines > 1) {
-		_displayfunction |= LCD_2LINE;
+		_displayfunction |= LCD_2LINE;	// dispalcfunction the 4th set 1
 	}
-	_numlines = lines;
+	_numlines = lines;	//TODO
 
 	// for some 1 line displays you can select a 10 pixel high font
 	if ((dotsize != 0) && (lines == 1)) {
-		_displayfunction |= LCD_5x10DOTS;
+		_displayfunction |= LCD_5x10DOTS; // 3rd bit set 1
 	}
 
 	// SEE PAGE 45/46 FOR INITIALIZATION SPECIFICATION!
@@ -85,7 +85,7 @@ void LiquidCrystal_I2C::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
 	delay(50); 
   
 	// Now we pull both RS and R/W low to begin commands
-	expanderWrite(_backlightval);	// reset expanderand turn backlight off (Bit 8 =1)
+	expanderWrite(_backlightval);	// reset expanderand turn backlight off (Bit 8 =1) //TODO ?
 	delay(1000);
 
   	//put the LCD into 4 bit mode
@@ -261,7 +261,7 @@ void LiquidCrystal_I2C::send(uint8_t value, uint8_t mode) {
 
 void LiquidCrystal_I2C::write4bits(uint8_t value) {
 	expanderWrite(value);
-	pulseEnable(value);
+	pulseEnable(value);	// CS signal 10 01, send 4 bits into LCD
 }
 
 void LiquidCrystal_I2C::expanderWrite(uint8_t _data){                                        
