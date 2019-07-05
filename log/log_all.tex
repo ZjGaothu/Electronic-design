@@ -393,6 +393,34 @@
 \end{figure}
 
 \end{diary}
+\begin{diary}{2019.07.05上午}{模块联调初步搭建与电源管理模块PCB设计}
+
+  \par{}在工作日的第五个上午我们在调试通过各种模块串口数据收发的基础上，开始了所有模块的联合调试，此外，我们在昨晚收到了TI公司的样片，电源管理模块使用的芯片TPSM84，也进一步对电源管理模块进行测试。
+
+  首先在面包板上搭建电源管理模块的电路，输入$8\sim 10$V的正弦波，观察稳定输出的结果，如下图所示：
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 0.618\textwidth]{dianyuan.png}
+  \caption{电源管理模块}
+\end{figure}
+
+在输入正弦波存在毛刺的情况下，输出电压非常稳定，波动在毫伏级别，因此我们也验证了该模块能够正常工作，因此，我们计划将电源管理模块单独设计出一块PCB板进行系统的供电，由于本身的电源管理模块部分比较简单，因此也便于我们去添加额外的开关和电源指示灯，我们在上午绘制好了电源管理模块的PCB图并送去制版，如下图所示：
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 0.58\textwidth]{pcb.png}
+  \caption{电源管理模块PCB绘制}
+\end{figure}
+在PCB绘制的过程中，由于我们无法从元件库找到TPSM84芯片，因此查阅其datasheet换算单位后自己制作出了TPSM84的PCB模块，并且后来由于添加开关我们现找了自锁的按动开关，查阅其引脚和内部连接后进行接线，初次绘制PCB耗费了一定的时间。
+
+另一路的工作计划于面包板上先实现硬件的连接，随着硬件的搭建我们同时开始软件方面的引脚分配，初步在无总线的情况下在Arduino串口轮询读取数据，若其能够联合正常工作并读取数据，则可进一步设计PCB和添加总线方案。我们已经在面包板上完成了基于555的光强检测计，DHT温度湿度模块，BMP180气压检测和PM2.5模块的低通滤波部分，以及红外遥控模块，如下图所示：
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = 0.58\textwidth]{lianhe.jpg}
+  \caption{联合调试部分硬件}
+\end{figure}
+在下午的工作中我们将进一步进行搭建以及编写ino进行串口数据读取，如果PCB制作完成则会进一步焊接与测试。
 
 
+\end{diary}
 \end{document}
