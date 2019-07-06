@@ -16,9 +16,11 @@
 class dht11
 {
 public:
-    int read(int pin);
-	int humidity;
-	int temperature;
+    int read(int pin, uint8_t* code);
+	uint8_t humidity_int;
+  uint8_t humidity_dec;
+  uint8_t temperature_int;
+  uint8_t temperature_dec;
 };
 #endif
 //

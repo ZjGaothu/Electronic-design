@@ -25,7 +25,7 @@
 // DHTLIB_OK
 // DHTLIB_ERROR_CHECKSUM
 // DHTLIB_ERROR_TIMEOUT
-int dht11::read(int pin)
+int dht11::read(int pin, uint8_t* code)
 {
 	// BUFFER TO RECEIVE
 	uint8_t bits[5];
@@ -51,7 +51,7 @@ int dht11::read(int pin)
 	loopCnt = 10000;
 	while(digitalRead(pin) == HIGH)
 		if (loopCnt-- == 0) return DHTLIB_ERROR_TIMEOUT;
-
+  uint8_t sum = 0;
 	// READ OUTPUT - 40 BITS => 5 BYTES or TIMEOUT
 	for (int i=0; i<40; i++)
 	{
@@ -64,22 +64,24 @@ int dht11::read(int pin)
 		loopCnt = 10000;
 		while(digitalRead(pin) == HIGH)
 			if (loopCnt-- == 0) return DHTLIB_ERROR_TIMEOUT;
-
-		if ((micros() - t) > 40) bits[idx] |= (1 << cnt);
+		if ((micros() - t) > 40) {bits[idx] |= (1 << cnt);}
 		if (cnt == 0)   // next byte?
 		{
 			cnt = 7;    // restart at MSB
+      code[idx] = bits[idx];
+      if (idx != 4) {
+        sum += bits[idx];
+      }
 			idx++;      // next byte!
 		}
 		else cnt--;
 	}
 
-	// WRITE TO RIGHT VARS
-        // as bits[1] and bits[3] are allways zero they are omitted in formulas.
-	humidity    = bits[0]; 
-	temperature = bits[2]; 
+  humidity_int = bits[0];
+  humidity_dec = bits[1];
+  temperature_int = bits[2];
+  temperature_dec = bits[4];
 
-	uint8_t sum = bits[0] + bits[2];  
 
 	if (bits[4] != sum) return DHTLIB_ERROR_CHECKSUM;
 	return DHTLIB_OK;
