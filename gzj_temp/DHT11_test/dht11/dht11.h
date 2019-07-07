@@ -1,4 +1,4 @@
- #ifndef dht11_h
+#ifndef dht11_h
 #define dht11_h
 
 #if defined(ARDUINO) && (ARDUINO >= 100)
@@ -16,7 +16,7 @@
 class dht11
 {
 public:
-    int read(int pin);
+  int read(int pin);
 	int humidity;
 	int temperature;
 };
