@@ -9,5 +9,5 @@ void setup() {
 }
 
 void loop() {
-    RadarSweeper(pos + 5); // digital degree control 0-180 directly
+    RadarSweeper.write(pos + 5); // digital degree control 0-180 directly
 }
