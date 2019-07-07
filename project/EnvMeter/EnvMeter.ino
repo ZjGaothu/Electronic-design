@@ -28,6 +28,7 @@ A4 - SDA, A5 - SCK
 #define SERVO_PIN 5 // TODO check, PWM need
 #define CHAOS_PIN A1
 #define SD_CS_PIN 4
+#define REFRESH_INTR_PIN 3
 
 // I2C use hard I2C in arduino A4 - SDA, A5 - SCK
 // I2C device, define address
@@ -108,6 +109,7 @@ uint8_t state;
 // up down start/stop_roll sensitivity_set
 
 // use servo to Sweep Radar, check if there is animal
+void RrfreshMeasure(); // TODO attahc interupt
 void SweepRadar();
 void Btn2State();
 void PrintLCDByState();
@@ -133,6 +135,9 @@ void setup() {
     pinMode(LIGHT_PULSE_PIN, INPUT);
     pinMode(CHAOS_PIN, INPUT);
     state = 0x00;
+    // TODO interrupts refresh
+    // pinMode(REFRESH_INTR_PIN, INPUT);
+    // attachInterrupt(digitalPinToInterrupt(REFRESH_INTR_PIN), RrfreshMeasure, RISING);
 }
 
 void loop() {
@@ -180,6 +185,41 @@ void loop() {
     BluetoothSend();
     // write in SD card
     FileWrite();
+}
+
+void RrfreshMeasure() {
+    // Temperature and humidity
+    t_h_sensor.read(T_H_PIN); // send request to Temperature and humidity sensor, without check sum. // data in t_h_sensor.humidity_int .humidity_dec, .temperature_int, .temperature_dec
+    delayMicroseconds(20000); // TODO cancel it?
+
+    // air pressure, without error check
+    air_presure_sensor.getPressure(presureP, presureT);
+    delayMicroseconds(20000); 
+
+    // PM2.5
+    digitalWrite(DUST_LED_PIN, LOW);
+    delayMicroseconds(samplingTime);
+
+    dustVal = ((analogRead(DUST_PIN) * (5.0 / 1024) * 0.17 - 0.1) / 1024 - 0.0356) * 120000 * 0.035; // TODO check formula
+    dustVal = dustVal > 0 ? dustVal : 0;
+
+    delayMicroseconds(deltaTime);
+    digitalWrite(DUST_LED_PIN, HIGH);
+
+    delayMicroseconds(20000); 
+
+    // light TODO add formula and cancel time data
+    light_pulse_time = pulseIn(LIGHT_PULSE_PIN, LOW);
+    delayMicroseconds(20000); 
+    
+    SweepRadar();
+
+    if (Wire.requestFrom((uint8_t)KEY_RADAR_ADDR, (uint8_t)1) != 1) { // request 1 byte from key radar serial
+        key_radar_code = 0; // for error
+    } else {
+        key_radar_code = (Wire.read() & 0x08) | (key_radar_code & 0xf7); //set radar bit TODO check it
+    }
+    // TODO now code order use key_radar_code & 0x08 == 1 for is animal
 }
 
 // use servo to Sweep Radar, check if there is animal
