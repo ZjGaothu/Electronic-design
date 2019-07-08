@@ -1,8 +1,8 @@
 // pin configuration
 /*
 dht11 - 8 temperature and humidity sensor
-GP2Y1050AU0F signal - A0(remember filter); led - 12
-light_pulse - 13
+GP2Y1050AU0F signal - A0(remember filter); led - 6
+light_pulse - 7
 IR - 9
 servo - 5
 chaos - A1
@@ -22,8 +22,8 @@ A4 - SDA, A5 - SCK
 //PIN define TODO maybe use a .h file
 #define T_H_PIN 8 // Temperature and humidity sensor dht11
 #define DUST_PIN A0 // dust sensor GP2Y1050AU0F
-#define DUST_LED_PIN 12 // DUST LED, flashing to check light to get dust density
-#define LIGHT_PULSE_PIN 13
+#define DUST_LED_PIN 6 // DUST LED, flashing to check light to get dust density
+#define LIGHT_PULSE_PIN 7
 #define IR_PIN 9 // IR remote receiver pin
 #define SERVO_PIN 5 // TODO check, PWM need
 #define CHAOS_PIN A1
@@ -134,7 +134,7 @@ void setup() {
     pinMode(DUST_PIN, INPUT);
     pinMode(LIGHT_PULSE_PIN, INPUT);
     pinMode(CHAOS_PIN, INPUT);
-    state = 0x00;
+    state = 0x02;
     // TODO interrupts refresh
     // pinMode(REFRESH_INTR_PIN, INPUT);
     // attachInterrupt(digitalPinToInterrupt(REFRESH_INTR_PIN), RrfreshMeasure, RISING);
@@ -153,13 +153,13 @@ void loop() {
     digitalWrite(DUST_LED_PIN, LOW);
     delayMicroseconds(samplingTime);
 
-    dustVal = ((analogRead(DUST_PIN) * (5.0 / 1024) * 0.17 - 0.1) / 1024 - 0.0356) * 120000 * 0.035; // TODO check formula
-    dustVal = dustVal > 0 ? dustVal : 0;
+    // dustVal = ((analogRead(DUST_PIN) * (5.0 / 1024) * 0.17 - 0.1) / 1024 - 0.0356) * 120000 * 0.035; // TODO check formula
+    // dustVal = dustVal > 0 ? dustVal : 0;
+    dustVal = analogRead(DUST_PIN);
 
     delayMicroseconds(deltaTime);
     digitalWrite(DUST_LED_PIN, HIGH);
     delayMicroseconds(sleepTime);
-
     delay(20); // TODO cancel it?
 
     // light TODO add formula and cancel time data
@@ -168,15 +168,15 @@ void loop() {
     
     SweepRadar();
 
-    if (Wire.requestFrom((uint8_t)KEY_RADAR_ADDR, (uint8_t)1) != 1) { // request 1 byte from key radar serial
-        key_radar_code = 0; // for error
-    } else {
-        key_radar_code = Wire.read(); // get both radar for animal data and key data
-    }
-    // TODO now code order use key_radar_code & 0x08 == 1 for is animal
-
-    // btn read to change state
-    Btn2State();
+//    if (Wire.requestFrom((uint8_t)KEY_RADAR_ADDR, (uint8_t)1) != 1) { // request 1 byte from key radar serial
+//        key_radar_code = 0; // for error
+//    } else {
+//        key_radar_code = Wire.read(); // get both radar for animal data and key data
+//    }
+//    // TODO now code order use key_radar_code & 0x08 == 1 for is animal
+//
+//    // btn read to change state
+//    Btn2State();
     // ir_remote check TODO
     IR2State();
     // show
@@ -238,21 +238,21 @@ void Btn2State() {
         return;
     }
     if ((state & 0x01 != 0) && (key_radar_code & 0x80 != 0)) { // up
-        if (state & 0x70 == 0) { // the first line show temperature(code 0) now, set for circle to animal detect(code 5)
+        if ((state & 0x70) == 0) { // the first line show temperature(code 0) now, set for circle to animal detect(code 5)
             state += 0x60;
         }
-        if (state & 0x0e == 0) { // the second line show temperature(code 0) now, set for circle to animal detect(code 5)
+        if ((state & 0x0e) == 0) { // the second line show temperature(code 0) now, set for circle to animal detect(code 5)
             state += 0x0c;
         }
         state -= 0x12; // up line, both 3 bits show code -1
         return;
     }
-    if ((state & 0x01 != 0) && (key_radar_code & 0x80 != 0)) { // down
+    if (((state & 0x01) != 0) && (key_radar_code & 0x80 != 0)) { // down
         state += 0x12;
-        if (state & 0x70 == 0x60) { // the first line show animal detect(code 5) before, set now for circle to temperature(code 0)
+        if ((state & 0x70) == 0x60) { // the first line show animal detect(code 5) before, set now for circle to temperature(code 0)
             state &= 0x0f;
         }
-        if (state & 0x0e == 0x0c) { // the second line show animal detect(code 5) before, set now for circle to animal detect
+        if ((state & 0x0e) == 0x0c) { // the second line show animal detect(code 5) before, set now for circle to animal detect
             state &= 0xf1;
         }
          // up line, both 3 bits show code +1
@@ -364,36 +364,38 @@ void IR2State() {
         switch (ir_code.value)
         {
         case UP_IR:
-            if (state & 0x70 == 0) { // the first line show temperature(code 0) now, set for circle to animal detect(code 5)
+            if ((state & 0x70) == 0) { // the first line show temperature(code 0) now, set for circle to animal detect(code 5)
                 state += 0x60;
             }
-            if (state & 0x0e == 0) { // the second line show temperature(code 0) now, set for circle to animal detect(code 5)
+            if ((state & 0x0e) == 0) { // the second line show temperature(code 0) now, set for circle to animal detect(code 5)
                 state += 0x0c;
             }
             state -= 0x12; // up line, both 3 bits show code -1
             break;
         case DOWN_IR:
             state += 0x12;
-            if (state & 0x70 == 0x60) { // the first line show animal detect(code 5) before, set now for circle to temperature(code 0)
+            if ((state & 0x70) == 0x60) { // the first line show animal detect(code 5) before, set now for circle to temperature(code 0)
                 state &= 0x0f;
             }
-            if (state & 0x0e == 0x0c) { // the second line show animal detect(code 5) before, set now for circle to animal detect
+            if ((state & 0x0e) == 0x0c) { // the second line show animal detect(code 5) before, set now for circle to animal detect
                 state &= 0xf1;
             }
             // up line, both 3 bits show code +1
             break;
         default: // self define order TODO hide other useless key
-            state = state & 0x8f + (IRNum2Num(ir_code) << 4); // set the first line
+            state = (state & 0x8f) + (IRNum2Num(ir_code) << 4); // set the first line
             irrecv.resume();
             delay(10); //TODO whether delay
             if (!irrecv.decode(&ir_code)) {
                 break;
             }
-            state = state & 0x8f + (IRNum2Num(ir_code) << 1); // set the second line
+            state = (state & 0x8f) + (IRNum2Num(ir_code) << 1); // set the second line
             break;
         }
         irrecv.resume();
         return;
+    } else {
+      irrecv.resume();  
     }
     return;
 }
@@ -432,7 +434,7 @@ void BluetoothSend() {
     Serial.print(key_radar_code & 0x08);
     Serial.println(F(","));
     Serial.print(F("state"));
-    Serial.println(state);
+    Serial.println(state, BIN);
 }
 
 void FileWrite() {
