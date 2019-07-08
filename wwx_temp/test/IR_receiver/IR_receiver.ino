@@ -1,7 +1,7 @@
 // receive and check remote controller code
 #include <IRremote.h>
 
-IRrecv irrecv(6);
+IRrecv irrecv(8);
 
 decode_results result; // 427btye(20%) variable memory
 
@@ -12,11 +12,13 @@ void setup() {
 }
 
 void loop() {
-    if (irrecv.decode(&result)) {
+    if (!irrecv.decode(&result)) {
+        Serial.println("No IR");         
+    } else {
         Serial.println(result.value, HEX);
         irrecv.resume();    // recover from block use to be ready for next check
     }
-    delay(100);
+    delay(1000);
 }
 
 //result

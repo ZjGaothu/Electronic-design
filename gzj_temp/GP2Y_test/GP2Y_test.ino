@@ -24,16 +24,9 @@ void loop(){
   digitalWrite(ledPower,HIGH);
   delayMicroseconds(sleepTime);
  
-  calcVoltage = voMeasured*(5.0/1024);
-  dustDensity = 0.17*calcVoltage-0.1;
- 
-  if ( dustDensity < 0)
-  {
-    dustDensity = 0.00;
-  }
- 
   Serial.println("Raw Signal Value (0-1023):");
   Serial.println(voMeasured);
+<<<<<<< HEAD
  
   Serial.println("Voltage:");
   Serial.println(calcVoltage);
@@ -42,5 +35,8 @@ void loop(){
   Serial.println(dustDensity);
  
   delay(20);
+=======
+  delay(3000);
+>>>>>>> ed7085ef3f804934fe04be261b346aa8a71cf030
 }
 //数据端A0
