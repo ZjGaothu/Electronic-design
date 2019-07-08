@@ -26,6 +26,17 @@ void loop(){
  
   Serial.println("Raw Signal Value (0-1023):");
   Serial.println(voMeasured);
+<<<<<<< HEAD
+ 
+  Serial.println("Voltage:");
+  Serial.println(calcVoltage);
+ 
+  Serial.println("Dust Density:");
+  Serial.println(dustDensity);
+ 
+  delay(20);
+=======
   delay(3000);
+>>>>>>> ed7085ef3f804934fe04be261b346aa8a71cf030
 }
 //数据端A0
