@@ -1,9 +1,9 @@
 int measurePin = A0;            
 int ledPower = 12;              
  
-unsigned int samplingTime = 280;
-unsigned int deltaTime = 40;
-unsigned int sleepTime = 9680;
+const unsigned int samplingTime PROGMEM = 280;
+const unsigned int deltaTime PROGMEM = 40;
+const unsigned int sleepTime PROGMEM = 9680;
  
 float voMeasured = 0;
 float calcVoltage = 0;
@@ -41,6 +41,6 @@ void loop(){
   Serial.println("Dust Density:");
   Serial.println(dustDensity);
  
-  delay(1000);
+  delay(20);
 }
 //数据端A0
