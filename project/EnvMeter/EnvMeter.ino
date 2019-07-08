@@ -158,6 +158,7 @@ void loop() {
 
     delayMicroseconds(deltaTime);
     digitalWrite(DUST_LED_PIN, HIGH);
+    delayMicroseconds(sleepTime);
 
     delay(20); // TODO cancel it?
 
@@ -306,7 +307,7 @@ void PrintLCDByState() {
         lcd.setCursor(0, 1);
         lcd.print(F("isForce:"));
         lcd.print(key_radar_code & 0x08);
-        //TODO delay ?
+        delay(show_refresh_time);
         return;
     }
 }
@@ -430,6 +431,8 @@ void BluetoothSend() {
     Serial.print(F(","));
     Serial.print(key_radar_code & 0x08);
     Serial.println(F(","));
+    Serial.print(F("state"));
+    Serial.println(state);
 }
 
 void FileWrite() {
