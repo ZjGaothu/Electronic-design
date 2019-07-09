@@ -168,15 +168,17 @@ void loop() {
     
     SweepRadar();
 
-//    if (Wire.requestFrom((uint8_t)KEY_RADAR_ADDR, (uint8_t)1) != 1) { // request 1 byte from key radar serial
-//        key_radar_code = 0; // for error
-//    } else {
-//        key_radar_code = Wire.read(); // get both radar for animal data and key data
-//    }
-//    // TODO now code order use key_radar_code & 0x08 == 1 for is animal
-//
-//    // btn read to change state
-//    Btn2State();
+    if (Wire.requestFrom((uint8_t)KEY_RADAR_ADDR, (uint8_t)1) != 1) { // request 1 byte from key radar serial
+        key_radar_code = 0; // for error
+        Serial.println(F("no addr"));
+    } else {
+        key_radar_code = Wire.read(); // get both radar for animal data and key data
+        Serial.print(F("done read:"));Serial.println(key_radar_code,BIN);
+    }
+    // TODO now code order use key_radar_code & 0x08 == 1 for is animal
+
+    // btn read to change state
+    Btn2State();
     // ir_remote check TODO
     IR2State();
     // show
@@ -226,18 +228,24 @@ void RrfreshMeasure() {
 // use servo to Sweep Radar, check if there is animal
 // TODO inline or marco?
 void SweepRadar() {
+    Serial.println(analogRead(CHAOS_PIN) % 181);
     radar_sweeper.write(analogRead(CHAOS_PIN) % 181); // turn it to 0-180 TODO change formula?
-    delayMicroseconds(100); // TODO check time
-    radar_sweeper.write(analogRead(CHAOS_PIN) % 181); // turn it to 0-180 TODO change formula?
+//    delayMicroseconds(100); // TODO check time
+//    Serial.println(analogRead(CHAOS_PIN) % 181);
+//    radar_sweeper.write(analogRead(CHAOS_PIN) % 181); // turn it to 0-180 TODO change formula?
 }
 
 void Btn2State() {
     // TODO maybe simplify bool operation
-    if ((state & 0x01 == 0) && (key_radar_code & 0x20 != 0)) {
-        state = 0x03; // stop roll and show temperature and humidity
-        return;
+    if ((key_radar_code & 0x20) != 0) {
+        if ((state & 0x01) == 0) {
+          state = 0x03; // stop roll and show temperature and humidity
+          return;
+        } else {
+          state = 0x02;  
+        }
     }
-    if ((state & 0x01 != 0) && (key_radar_code & 0x80 != 0)) { // up
+    if ((state & 0x01 != 0) && ((key_radar_code & 0x80) != 0)) { // up
         if ((state & 0x70) == 0) { // the first line show temperature(code 0) now, set for circle to animal detect(code 5)
             state += 0x60;
         }
@@ -247,7 +255,7 @@ void Btn2State() {
         state -= 0x12; // up line, both 3 bits show code -1
         return;
     }
-    if (((state & 0x01) != 0) && (key_radar_code & 0x80 != 0)) { // down
+    if (((state & 0x01) != 0) && ((key_radar_code & 0x80) != 0)) { // down
         state += 0x12;
         if ((state & 0x70) == 0x60) { // the first line show animal detect(code 5) before, set now for circle to temperature(code 0)
             state &= 0x0f;
