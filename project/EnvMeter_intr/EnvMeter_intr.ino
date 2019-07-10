@@ -128,9 +128,12 @@ void setup() {
     Serial.begin(9600); // serial to bluetooth by module HC-06 TODO debug use, maybe end
     Serial.println(F("setup begin"));
     Wire.begin(); // set I2C communicate
+    Serial.println(F("1"));
     air_presure_sensor.begin();
+    Serial.println(F("2"));
     //    irrecv.enableIRIn();
     radar_sweeper.attach(SERVO_PIN);
+    Serial.println(F("3"));
     if (!SD.begin(SD_CS_PIN)) {
         Serial.print(F("no SD card"));
     }
