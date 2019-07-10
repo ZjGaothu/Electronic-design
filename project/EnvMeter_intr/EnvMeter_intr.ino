@@ -9,10 +9,10 @@ chaos - A1
 SD MOSI - 11; MISO - 12; SCK - 13; CS - 4
 I2C device
 A4 - SDA, A5 - SCK
-intr - 3
 */
 #include <Wire.h> //I2C device library
-#include "SFE_BMP180.h"
+//#include "SFE_BMP180.h"
+#include<Adafruit_BMP085.h>
 #include "dht11.h"
 #include "LiquidCrystal_I2C.h"
 #include <IRremote.h>
@@ -26,10 +26,10 @@ intr - 3
 #define DUST_LED_PIN 6 // DUST LED, flashing to check light to get dust density
 #define LIGHT_PULSE_PIN 7
 #define IR_PIN 9 // IR remote receiver pin
-#define SERVO_PIN 5
+#define SERVO_PIN 5 // TODO check, PWM need
 #define CHAOS_PIN A1
 #define SD_CS_PIN 4
-#define REFRESH_INTR_PIN 3
+#define REFRESH_INTR_PIN 2
 
 // I2C use hard I2C in arduino A4 - SDA, A5 - SCK
 // I2C device, define address
@@ -38,25 +38,28 @@ intr - 3
 #define AIR_PRESURE_ADDR 0x77 // SFE_BMP180
 
 dht11 t_h_sensor;
-SFE_BMP180 air_presure_sensor;
+//SFE_BMP180 air_presure_sensor;
+Adafruit_BMP085 air_presure_sensor;
 LiquidCrystal_I2C lcd(LCD_ADDR, 16, 2);
 IRrecv irrecv(IR_PIN);
 Servo radar_sweeper;
 File record_file;
 
-// GP2Y PM2.5 sensor sampling parameter
+// TODO unknow para
 const unsigned int samplingTime PROGMEM = 280;
 const unsigned int deltaTime PROGMEM = 40;
 const unsigned int sleepTime PROGMEM = 9680;
 const unsigned int show_refresh_time PROGMEM = 700; // ms
 
+
 // measure storeage
 float dustVal = 0;
-double presureP,presureT; // TODO maybe cancel 1 variable
-int light_pulse_time = 0;
+double presure;
+unsigned int light_pulse_time = 0;
+float light_log = 0;
 decode_results ir_code;
 
-uint8_t key_radar_code;
+uint8_t key_radar_code; //temp P7-P4 for key, P3 for radar TODO check it
 // key setting
 /*
 P7 - P4
@@ -102,17 +105,16 @@ in stop roll bit P6 - P4, P3 - P1, the two value to show
 011 dust density(PM2.5)
 100 light intensity 
 101 animal detect(force)
-
-new data come in 1xxx xxxx
 */
 
 uint8_t state; 
+bool is_page_change = 0;
 
 // btn set
 // up down start/stop_roll sensitivity_set
 
 // use servo to Sweep Radar, check if there is animal
-void RrfreshMeasure(); 
+void RrfreshMeasure(); // TODO attahc interupt
 void SweepRadar();
 void Btn2State();
 void PrintLCDByState();
@@ -123,10 +125,11 @@ void BluetoothSend();
 void FileWrite();
 
 void setup() {
-    Serial.begin(9600); // serial to bluetooth by module HC-06
+    Serial.begin(9600); // serial to bluetooth by module HC-06 TODO debug use, maybe end
+    Serial.println(F("setup begin"));
     Wire.begin(); // set I2C communicate
     air_presure_sensor.begin();
-    irrecv.enableIRIn();
+    //    irrecv.enableIRIn();
     radar_sweeper.attach(SERVO_PIN);
     if (!SD.begin(SD_CS_PIN)) {
         Serial.print(F("no SD card"));
@@ -144,90 +147,139 @@ void setup() {
 }
 
 void loop() {
-    
-    SweepRadar();
-
-    // btn read to change state
-    Btn2State();
-    // ir_remote
-    IR2State();
-    // show
-    
-    PrintLCDByState();
-
     if ((state & 0x80) != 0) {
-        state &= 0x7f; // MSB to 0, has dealt data
+        state &= 0x7f;
+        is_page_change = 1;
+        // Temperature and humidity
+        t_h_sensor.read(T_H_PIN); // send request to Temperature and humidity sensor, without check sum. // data in t_h_sensor.humidity_int .humidity_dec, .temperature_int, .temperature_dec
+        delay(20); // TODO cancel it?
+
+        // air pressure, without error check
+        presure = air_presure_sensor.readPressure();
+        delay(20);
+
+        // PM2.5
+        digitalWrite(DUST_LED_PIN, LOW);
+        delayMicroseconds(samplingTime);
+
+        dustVal = float(analogRead(DUST_PIN)) * 1.72 - 34.34;
+        dustVal = dustVal > 0 ? dustVal : 0;
+
+        delayMicroseconds(deltaTime);
+        digitalWrite(DUST_LED_PIN, HIGH);
+        delayMicroseconds(sleepTime);
+        delay(20); // TODO cancel it?
+
+        // light TODO add formula and cancel time data
+        light_pulse_time = pulseIn(LIGHT_PULSE_PIN, LOW);
+        light_log = 0;
+        while(light_pulse_time / 10) {
+        light_log++;
+        light_pulse_time /= 10;  
+        }
+        light_log = -2.28 * light_log - 0.5 * light_pulse_time + 9.9914;
+        // lg I = A * lg(t) + [- A * lg(t_0) + lg I_0], I_0 = 1e^4 lux t_0 = 6.51 us A = -1.28
+        // lg t approx = (t - 1) * 2.3, use for decimal
+        // 10^x approx 1 + ln(10) * x approx 1 + 2.3 * x use to calc siginificant digit
+        delay(20); // TODO cancel it
+
         // bluetooth send
         BluetoothSend();
         // write in SD card
         FileWrite();
     }
     
+    SweepRadar();
+    if (Wire.requestFrom((uint8_t)KEY_RADAR_ADDR, (uint8_t)1) != 1) { // request 1 byte from key radar serial
+        key_radar_code = 0; // for error
+        Serial.println(F("no addr"));
+    } else {
+        key_radar_code = Wire.read(); // get both radar for animal data and key data
+    }
+
+    // btn read to change state
+    Btn2State();
+    PrintLCDByState();
+    // ir_remote check TODO
+    // IR2State();
+    // show
+
+    // if ((state & 0x80) != 0) {
+    //     state &= 0x7f; // MSB to 0, has dealt data
+    //     // bluetooth send
+    //     BluetoothSend();
+    //     // write in SD card
+    //     FileWrite();
+    // }
+    delay(100);
 }
 
 void RrfreshMeasure() {
-    state |= 0x80; // set state MSB 1, means new data come in
+    state |= 0x80;
     // Temperature and humidity
-    t_h_sensor.read(T_H_PIN); // send request to Temperature and humidity sensor, without check sum. // data in t_h_sensor.humidity_int .humidity_dec, .temperature_int, .temperature_dec
+    // t_h_sensor.read(T_H_PIN); // send request to Temperature and humidity sensor, without check sum. // data in t_h_sensor.humidity_int .humidity_dec, .temperature_int, .temperature_dec
+    // delayMicroseconds(20000); // TODO cancel it?
+
+    // // air pressure, without error check
+    // presure = air_presure_sensor.readPressure();
     // delayMicroseconds(20000); 
 
-    // air pressure, without error check
-    air_presure_sensor.getPressure(presureP, presureT);
-    // delayMicroseconds(20000); 
-
-    // PM2.5
-    digitalWrite(DUST_LED_PIN, LOW);
-    delayMicroseconds(samplingTime);
-
-    // dustVal = ((analogRead(DUST_PIN) * (5.0 / 1024) * 0.17 - 0.1) / 1024 - 0.0356) * 120000 * 0.035; // TODO check formula
+    // // PM2.5
+    // dustVal = float(analogRead(DUST_PIN)) * 1.72 - 34.34;
     // dustVal = dustVal > 0 ? dustVal : 0;
-    dustVal = analogRead(DUST_PIN);
 
-    delayMicroseconds(deltaTime);
-    digitalWrite(DUST_LED_PIN, HIGH);
-
+    // delayMicroseconds(deltaTime);
+    // digitalWrite(DUST_LED_PIN, HIGH);
+    // delayMicroseconds(sleepTime);
     // delayMicroseconds(20000); 
 
-    // light TODO add formula and cancel time data
-    light_pulse_time = pulseIn(LIGHT_PULSE_PIN, LOW, 10000); // max 10ms, very dark will return 0;
+    // light_pulse_time = pulseIn(LIGHT_PULSE_PIN, LOW);
+    // Serial.println(light_pulse_time);
+    // light_log = 0;
+    // while(light_pulse_time / 10) {
+    //   light_log++;
+    //   light_pulse_time /= 10;  
+    // }
+    // Serial.println(light_pulse_time);
+    // light_log = -2.28 * light_log - 0.5 * light_pulse_time + 9.9914;
+    // // lg I = A * lg(t) + [- A * lg(t_0) + lg I_0], I_0 = 1e^4 lux t_0 = 6.51 us A = -1.28
+    // // lg t approx = (t - 1) * 2.3, use for decimal
+    // // 10^x approx 1 + ln(10) * x approx 1 + 2.3 * x use to calc siginificant digit
+
     // delayMicroseconds(20000); 
     
     // SweepRadar();
 
-    // IO to I2C to ask Radar data in P3 in key_radar_code
-    if (Wire.requestFrom((uint8_t)KEY_RADAR_ADDR, (uint8_t)1) != 1) { // request 1 byte from key radar serial
-        key_radar_code = 0x07; // for error
-    } else {
-        key_radar_code = (Wire.read() & 0x08) | (key_radar_code & 0xf7); //set radar bit TODO check it
-    }
+    // if (Wire.requestFrom((uint8_t)KEY_RADAR_ADDR, (uint8_t)1) != 1) { // request 1 byte from key radar serial
+    //     key_radar_code = 0; // for error
+    // } else {
+    //     key_radar_code = (Wire.read() & 0x08) | (key_radar_code & 0xf7); //set radar bit TODO check it
+    // }
+
 }
 
 // use servo to Sweep Radar, check if there is animal
 // TODO inline or marco?
 void SweepRadar() {
-    Serial.println(analogRead(CHAOS_PIN) % 181);
-    radar_sweeper.write(analogRead(CHAOS_PIN) % 181); // turn it to 0-180
+    radar_sweeper.write(analogRead(CHAOS_PIN) % 181); // turn it to 0-180 TODO change formula?
 //    delayMicroseconds(100); // TODO check time
 //    Serial.println(analogRead(CHAOS_PIN) % 181);
-//    radar_sweeper.write(analogRead(CHAOS_PIN) % 181); // turn it to 0-180
+//    radar_sweeper.write(analogRead(CHAOS_PIN) % 181); // turn it to 0-180 TODO change formula?
 }
 
 void Btn2State() {
-    if (Wire.requestFrom((uint8_t)KEY_RADAR_ADDR, (uint8_t)1) != 1) { // request 1 byte from key radar serial
-        key_radar_code = 0x07; // for error
-    } else {
-        key_radar_code = (Wire.read() & 0x08) | (key_radar_code & 0xf7); //set radar bit TODO check it
-    }
-    // TODO maybe simplify bool operation
     if ((key_radar_code & 0x20) != 0) {
         if ((state & 0x01) == 0) {
+          is_page_change = 1;
           state = 0x03; // stop roll and show temperature and humidity
           return;
         } else {
-          state = 0x02;  
+          state = 0x02;
+          return;  
         }
     }
     if ((state & 0x01 != 0) && ((key_radar_code & 0x80) != 0)) { // up
+        is_page_change = 1;
         if ((state & 0x70) == 0) { // the first line show temperature(code 0) now, set for circle to animal detect(code 5)
             state += 0x60;
         }
@@ -237,7 +289,8 @@ void Btn2State() {
         state -= 0x12; // up line, both 3 bits show code -1
         return;
     }
-    if (((state & 0x01) != 0) && ((key_radar_code & 0x80) != 0)) { // down
+    if (((state & 0x01) != 0) && ((key_radar_code & 0x40) != 0)) { // down
+        is_page_change = 1;
         state += 0x12;
         if ((state & 0x70) == 0x60) { // the first line show animal detect(code 5) before, set now for circle to temperature(code 0)
             state &= 0x0f;
@@ -252,14 +305,18 @@ void Btn2State() {
 }
 
 void PrintLCDByState() {
-    if (state & 0x01 == 1) { // stop roll
+    if ((state & 0x01) == 1) { // stop roll
+        if (!is_page_change) {
+            return;
+        }
+        is_page_change = 0;
         lcd.clear();
         lcd.setCursor(0, 0);
         DecodeAndPrint((state & 0x70) >> 4); // show the first line
         lcd.setCursor(0, 1);
         DecodeAndPrint((state & 0x0e) >> 1); //show the second line
         return;
-    } else { // roll show
+    } else { // roll TODO roll time?
         // temperature and humidity
         lcd.clear();
         lcd.setCursor(0, 0);
@@ -280,8 +337,8 @@ void PrintLCDByState() {
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print(F("AirP:"));
-        lcd.print(presureP);
-        lcd.print(F("bar"));
+        lcd.print(presure);
+        lcd.print(F("Pa"));
         lcd.setCursor(0, 1);
         lcd.print(F("PM2.5:"));
         lcd.print(dustVal);
@@ -290,12 +347,14 @@ void PrintLCDByState() {
         //light and animal detect
         lcd.clear();
         lcd.setCursor(0, 0);
-        lcd.print(F("I:   "));
-        lcd.print(light_pulse_time); // TODO change show
-        lcd.print(F("lx"));
+        lcd.print(F("I:"));
+        lcd.print(1 + (light_log - (int)light_log) * 2.4); // TODO change show
+        lcd.print(F("e"));
+        lcd.print((int)light_log);
+        lcd.print(F(" lx"));
         lcd.setCursor(0, 1);
         lcd.print(F("isForce:"));
-        lcd.print(key_radar_code & 0x08);
+        lcd.print((key_radar_code >> 3) & 0x01);
         delay(show_refresh_time);
         return;
     }
@@ -319,21 +378,23 @@ void DecodeAndPrint(uint8_t code) {
             return;
         case 0x02: // Air pressure
             lcd.print(F("AirP:"));
-            lcd.print(presureP);
-            lcd.print(F("bar"));
+            lcd.print(presure);
+            lcd.print(F("Pa"));
             return;
         case 0x03: // PM2.5
             lcd.print(F("PM2.5:"));
             lcd.print(dustVal);
             return;
         case 0x04: // light
-            lcd.print(F("I:   "));
-            lcd.print(light_pulse_time); // TODO change show
+            lcd.print(F("I:"));
+            lcd.print(1 + (light_log - (int)light_log) * 2.4); // TODO change show
+            lcd.print(F("e"));
+            lcd.print((int)light_log);
             lcd.print(F("lx"));
             return;
         case 0x05: // animal detect
             lcd.print(F("isForce:"));
-            lcd.print(key_radar_code & 0x08);
+            lcd.print((key_radar_code >> 3) & 0x01);
             return;
         default:
             return;
@@ -344,6 +405,7 @@ void IR2State() {
     if (!irrecv.decode(&ir_code)) { // get nothing from IR
         return;
     }
+    Serial.print(ir_code.value,HEX);
     if (ir_code.value == ROLL_IR) {
         state ^= 0x01; // reverse P0
         irrecv.resume();
@@ -414,35 +476,34 @@ void BluetoothSend() {
     Serial.print(F(","));
     Serial.print(t_h_sensor.humidity_int);Serial.print(F("."));Serial.print(t_h_sensor.humidity_dec);
     Serial.print(F(","));
-    Serial.print(presureP);
+    Serial.print(presure);
     Serial.print(F(","));
     Serial.print(dustVal);
     Serial.print(F(","));
-    Serial.print(light_pulse_time);
+    Serial.print(light_log); // TODO real?
     Serial.print(F(","));
-    Serial.print(key_radar_code & 0x08);
+    Serial.print((key_radar_code >> 3) & 0x01);
     Serial.println(F(","));
-    Serial.print(F("state"));
-    Serial.println(state, BIN);
 }
 
 void FileWrite() {
-    record_file = SD.open(F("record.csv")); //TODO multi file name
+    record_file = SD.open(F("record.txt")); //TODO multi file name
     if (!record_file) {
         Serial.print(F("no space"));
         return;
-    } 
+    }
+    Serial.println(F("write")); 
     record_file.print(millis());
     record_file.print(F(","));
     record_file.print(t_h_sensor.temperature_int);record_file.print(F("."));record_file.print(t_h_sensor.temperature_dec);
     record_file.print(F(","));
     record_file.print(t_h_sensor.humidity_int);record_file.print(F("."));record_file.print(t_h_sensor.humidity_dec);
     record_file.print(F(","));
-    record_file.print(presureP);
+    record_file.print(presure);
     record_file.print(F(","));
     record_file.print(dustVal);
     record_file.print(F(","));
-    record_file.print(light_pulse_time);
+    record_file.print(light_log); // TODO real?
     record_file.print(F(","));
     record_file.print(key_radar_code & 0x08);
     record_file.println(F(","));

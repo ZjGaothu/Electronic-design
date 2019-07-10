@@ -1,4 +1,5 @@
 {
     "board": "arduino:avr:uno",
-    "sketch": "EnvMeter_intr.ino"
+    "sketch": "EnvMeter_intr.ino",
+    "port": "COM4"
 }
