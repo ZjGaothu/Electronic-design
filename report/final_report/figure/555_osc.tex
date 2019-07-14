@@ -1,0 +1,23 @@
+\tikzstyle{icdev}=[draw, text width=6em, minimum height=8em]
+\begin{tikzpicture}[every node/.style = {font = \footnotesize}]
+    \draw (0,4) node[left]{$V_{cc}$}
+    to[short,o-] (0.8,4) 
+    to[/tikz/circuitikz/bipoles/length=0.7cm,R,a = $R_1$] (0.8,2.4)
+    to[/tikz/circuitikz/bipoles/length=0.7cm,R, a = $R_2$] (0.8,1.8)
+    to[/tikz/circuitikz/bipoles/length=0.7cm,C, a = $C$] (0.8,0.2) -- (0.8,0) node[ground]{};
+    \node (digichip) [icdev,xshift=3cm,yshift=2cm] {};
+% top terminal pins - 4 RESET, 8 Vcc
+    \path [draw](0.8,4) -| (2.5,3.4) node[below]{RESET} node[above left]{4};
+    \path [draw](2.5,4) -| (3.5,3.4) node[below]{$V_{cc}$} node[above left] {8};
+% bottom terminal pins - 1 GND  , 5 CTRL
+    \path [draw](0.8,0) -| (2.5,0.6) node[above]{GND} node[below left]{1};
+    \path [draw](2.5,0) -- (3.5,0)
+        to[/tikz/circuitikz/bipoles/length=0.7cm,C, a = $0.01\mu F$](3.5,0.6)  
+        node[above]{CTRL} (3.4,0.6)node[below left]{5};
+% leftside terminal pins - 7 DIS, 6 THR, 2 TRG
+    \draw (0.8,2.6) -- (1.83,2.6) node[right]{DIS} node[above left]{7}
+        (1.2,1.5) |- (1.83,2) node[right]{THR} node[above left]{6}
+        (0.8,1.5) -- (1.83,1.5) node[right]{TRG} node[above left]{2};
+% rightside terminal pin - 3 out
+    \draw (4.17,2) node[left]{Out} -- (4.8,2) node[above left]{3};
+\end{tikzpicture}

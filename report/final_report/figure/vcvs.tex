@@ -1,0 +1,10 @@
+\begin{tikzpicture}
+\draw (0,0) node[op amp] (opamp) {}
+(opamp.out) --++ (0,1.5) to[R, l = $R_f$, a = $3.3k\Omega$] (-0.5,1.5) -| (opamp.-) to[R, l = $R_1$, a = $5.1k\Omega$] (-3,0.5) node[ground]{};
+;
+\draw (opamp.+) to[C, l = $C$, a = $15nF$] (-1.2, -2) node[ground]{};
+\draw (opamp.+) to[R, l = $R$] (-3.2,-0.5);
+\draw (opamp.out) --++(0,-3) --++(-5,0) to[C, l = $C$] (-3.8,-0.5) to[short,*-] (-3.8,-0.5) -- (-3.2,-0.5);
+\draw (-3.8,-0.5) to[R, l = $R$, a = $3.3k\Omega$] (-5.5,-0.5) to[short, -o] (-5.6,-0.5) node[left]{$v_i$};
+\draw (opamp.out) to[short, -o] (1.5,0) node[right]{$v_0$};
+\end{tikzpicture}
